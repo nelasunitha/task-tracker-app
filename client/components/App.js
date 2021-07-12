@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import Todos from './Todos';
 import CreateTodo from './CreateTodo';
+import EditTodo from './EditTodo';
 import { connect } from 'react-redux';
 import { fetchTodos } from '../store/effects/effects';
 
@@ -21,6 +22,7 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={Todos} />
             <Route path='/todos/create' component={CreateTodo} />
+            <Route path='/todos/edit/:id' component={EditTodo} />
           </Switch>
         </div>
       </Router>
