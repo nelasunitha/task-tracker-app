@@ -22,7 +22,7 @@ class App extends Component {
           <Switch>
             <Route exact path='/' component={Todos} />
             <Route path='/todos/create' component={CreateTodo} />
-            <Route path='/todos/edit/:id' component={EditTodo} />
+            <Route path='/todos/:id' component={EditTodo} />
           </Switch>
         </div>
       </Router>

@@ -16,6 +16,13 @@ export const _deleteTodo = (todo) => {
   };
 };
 
+export const _updateTodo = (todo) => {
+  return {
+    type: types.UPDATE_TODO,
+    todo,
+  };
+};
+
 export const setTodos = (todos) => {
   return {
     type: types.SET_TODOS,
