@@ -5,15 +5,20 @@ import {
   _deleteTodo,
   _updateTodo,
   setTodos,
+  setTodo
 } from "../actions/actions";
 
 // THUNK CREATORS
 
 export const createTodo = (todo, history) => {
   return async (dispatch) => {
-    const { data: created } = await axios.post("/api/todos", todo);
-    dispatch(_createTodo(created));
-    history.push("/");
+    try {
+      const { data: created } = await axios.post("/api/todos", todo);
+      dispatch(_createTodo(created));
+      history.push("/");
+    } catch (error) {
+      console.log(error);
+    }
   };
 };
 
@@ -40,9 +45,26 @@ export const updateTodo = (id, history) => {
     }
   };
 };
+
+export const fetchTodo = (id) => {
+  console.log(id)
+  return async (dispatch) => {
+    try {
+      const { data: todo } = await axios.get(`/api/todos/${id}`);
+      dispatch(setTodo(todo))
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
+
 export const fetchTodos = () => {
   return async (dispatch) => {
-    const { data: todos } = await axios.get("/api/todos");
-    dispatch(setTodos(todos));
+    try {
+      const { data: todos } = await axios.get("/api/todos");
+      dispatch(setTodos(todos));
+    } catch (error) {
+      console.log(error)
+    }
   };
 };

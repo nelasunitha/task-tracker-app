@@ -23,6 +23,13 @@ export const _updateTodo = (todo) => {
   };
 };
 
+export const setTodo = (todo) => {
+  return {
+    type: types.SET_TODO,
+    todo
+  }
+}
+
 export const setTodos = (todos) => {
   return {
     type: types.SET_TODOS,

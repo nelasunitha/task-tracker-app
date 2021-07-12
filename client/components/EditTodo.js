@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { deleteTodo, updateTodo } from "../store/effects/effects";
+import { deleteTodo, updateTodo, fetchTodo, fetchTodos } from "../store/effects/effects";
 import { connect } from "react-redux";
  import { Link } from 'react-router-dom';
 
@@ -10,16 +10,26 @@ class EditTodo extends Component {
       taskName: '',
       assignee: ''
     };
+
     this.handleDelete = this.handleDelete.bind(this);
     this.handleUpdate = this.handleUpdate.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
-  componentDidUpdate () {
+
+  componentDidMount () {
     try {
-      this.props.updateTodo(this.props.match.params.id)
+      this.props.loadTodo(this.props.match.params.id)
+    } catch (error) {
+      console.log(error)
     }
-    catch (error) {
-      console.error(error)
+  }
+
+  componentDidUpdate(prevProps) {
+    if(prevProps.todo.id !== this.props.todo.id) {
+      this.setState({
+        taskName: this.props.todo.taskName || '',
+        assignee: this.props.todo.assignee || ''
+      })
     }
   }
 
@@ -49,7 +59,7 @@ class EditTodo extends Component {
       <input name='assignee' value={assignee} onChange={this.handleChange} />
 
       <button type="delete" onClick = {this.handleDelete}>Delete</button>
-        <button type="update" onClick = {this.handleUpdate}>Edit</button>
+      <button type="update" onClick = {this.handleUpdate}>Edit</button>
 
       <Link to='/'>Cancel</Link>
 
@@ -57,16 +67,15 @@ class EditTodo extends Component {
     );
   }
 }
-const mapStateToProps = (state) => {
-  return {
 
+const mapStateToProps = ({todo}) => ({
+  todo
+})
 
-  }
-}
 const mapDispatchToProps = (dispatch, { history })=> ({
   deleteTodo: (id) => dispatch(deleteTodo(id,history)),
-  updateTodo: (id) => dispatch(updateTodo(id, history))
-
+  updateTodo: (id) => dispatch(updateTodo(id, history)),
+  loadTodo: (id) => dispatch(fetchTodo(id))
 });
 
 export default connect(mapStateToProps,mapDispatchToProps)(EditTodo);
