@@ -1,81 +1,114 @@
 import React, { Component } from "react";
-import { deleteTodo, updateTodo, fetchTodo, fetchTodos } from "../store/effects/effects";
+import { deleteTodo, updateTodo, fetchTodo } from "../store/effects/effects";
+import { setTodo } from '../store/actions/actions';
 import { connect } from "react-redux";
- import { Link } from 'react-router-dom';
 
 class EditTodo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      taskName: '',
-      assignee: ''
+      title: '',
+      description: '',
+      status: '',
+      dueDate: ''
     };
 
-    this.handleDelete = this.handleDelete.bind(this);
-    this.handleUpdate = this.handleUpdate.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount () {
+  componentDidMount() {
     try {
-      this.props.loadTodo(this.props.match.params.id)
+      this.props.fetchTodo(this.props.match.params.id);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   }
 
   componentDidUpdate(prevProps) {
-    if(prevProps.todo.id !== this.props.todo.id) {
+    if (prevProps.todo.id !== this.props.todo.id) {
       this.setState({
-        taskName: this.props.todo.taskName || '',
-        assignee: this.props.todo.assignee || ''
-      })
+        title: this.props.todo.title || '',
+        description: this.props.todo.description || '',
+        status: this.props.todo.status || '',
+        dueDate: this.props.todo.dueDate || ''
+      });
     }
   }
 
-  handleDelete() {
-    this.props.deleteTodo(this.props.match.params.id);
-  }
-
-  handleUpdate() {
-    this.props.updateTodo(this.props.match.params.id);
+  handleSubmit(evt) {
+    evt.preventDefault();
+    const { title, description, status, dueDate } = this.state;
+    // Check if required fields are not empty
+    if (title.trim() === '' || description.trim() === '' || status.trim() === '' || dueDate.trim() === '') {
+      // Handle error when required fields are empty
+      console.log('Please fill in all the required fields.');
+      return;
+    }
+    const updatedTodo = {
+      ...this.props.todo,
+      title,
+      description,
+      status,
+      dueDate: new Date(dueDate).toISOString() // Format dueDate to ISO string
+    };
+    this.props.updateTodo(updatedTodo);
   }
 
   handleChange(evt) {
-    this.setState ({
-      [evt.target.name]: evt.target.value,
-    })
+    this.setState({
+      [evt.target.name]: evt.target.value
+    });
   }
 
-
   render() {
-    const { assignee, taskName } = this.state;
+    const { title, description, status, dueDate } = this.state;
+    const { handleSubmit, handleChange } = this;
+
     return (
-      <form id='todo-form' >
-      <label htmlFor='taskName'>Task Name:</label>
-      <input name='taskName' value={taskName} onChange={this.handleChange} />
+      <div>
+        <form id="todo-form" onSubmit={handleSubmit}>
+          <label htmlFor="title">Title:</label>
+          <input name="title" onChange={handleChange} value={title} />
 
-      <label htmlFor='assignee'>Assign To:</label>
-      <input name='assignee' value={assignee} onChange={this.handleChange} />
+          <label htmlFor="description">Description:</label>
+          <textarea name="description" onChange={handleChange} value={description}></textarea>
 
-      <button type="delete" onClick = {this.handleDelete}>Delete</button>
-      <button type="update" onClick = {this.handleUpdate}>Edit</button>
+          <label htmlFor="status">Status:</label>
+          <select name="status" onChange={handleChange} value={status}>
+            <option value="">Select status</option>
+            <option value="completed">Completed</option>
+            <option value="inProgress">In Progress</option>
+            <option value="pending">Pending</option>
+          </select>
 
-      <Link to='/'>Cancel</Link>
+          <label htmlFor="dueDate">Due Date:</label>
+          <input type="date" name="dueDate" onChange={handleChange} value={dueDate} />
 
-      </form>
+          <button type="submit">Submit</button>
+        </form>
+        <form onSubmit={(ev) => ev.preventDefault()}>
+          <button
+            className="remove"
+            onClick={() => this.props.deleteTodo(this.props.match.params.id)}
+          >
+            Delete
+          </button>
+        </form>
+      </div>
     );
   }
 }
 
-const mapStateToProps = ({todo}) => ({
+const mapStateToProps = ({ todo }) => ({
   todo
-})
-
-const mapDispatchToProps = (dispatch, { history })=> ({
-  deleteTodo: (id) => dispatch(deleteTodo(id,history)),
-  updateTodo: (id) => dispatch(updateTodo(id, history)),
-  loadTodo: (id) => dispatch(fetchTodo(id))
 });
 
-export default connect(mapStateToProps,mapDispatchToProps)(EditTodo);
+const mapDispatchToProps = (dispatch, { history }) => ({
+  deleteTodo: (todo) => dispatch(deleteTodo(todo, history)),
+  updateTodo: (todo) => dispatch(updateTodo(todo, history)),
+  fetchTodo: (id) => dispatch(fetchTodo(id)),
+  clearTodo: () => dispatch(setTodo({}))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(EditTodo)

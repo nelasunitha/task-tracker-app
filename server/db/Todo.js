@@ -1,15 +1,27 @@
 const Sequelize = require('sequelize');
 const conn = require('./conn');
 
-const Todo = conn.define('todos', {
+const Todo = conn.define('Todo', {
   taskName: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   assignee: {
     type: Sequelize.STRING,
-    allowNull: false
-  }
+    allowNull: false,
+  },
+  status: {
+    type: Sequelize.STRING,
+    allowNull: false,
+  },
+  dueDate: {
+    type: Sequelize.DATE,
+    allowNull: false,
+  },
+  description: {
+    type: Sequelize.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = Todo;

@@ -34,10 +34,10 @@ export const deleteTodo = (id, history) => {
   };
 };
 
-export const updateTodo = (id, history) => {
+export const updateTodo = (todo, history) => {
   return async (dispatch) => {
     try {
-      const { data: updated } = await axios.put(`/api/todos/${id}`, id);
+      const { data: updated } = await axios.put(`/api/todos/${todo.id}`, todo);
       dispatch(_updateTodo(updated));
       history.push("/");
     } catch (error) {

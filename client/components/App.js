@@ -23,13 +23,18 @@ class App extends Component {
             <Route exact path='/' component={Todos} />
             <Route path='/todos/create' component={CreateTodo} />
             <Route path='/todos/:id' component={EditTodo} />
+
           </Switch>
+          <p>Please login or register:</p>
+             <div>
+              <Link to='/login' onClick={() => this.handleLinkClick('/login')}>Login</Link> |{' '}
+              <Link to='/register' onClick={() => this.handleLinkClick('/register')}>Register</Link>
+            </div>
         </div>
       </Router>
     );
   }
 }
-
 const mapStateToProps = ({ todos }) => ({
   todos
 });
