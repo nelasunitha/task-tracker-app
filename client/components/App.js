@@ -38,7 +38,6 @@ class App extends Component {
 const mapStateToProps = ({ todos }) => ({
   todos
 });
-
 const mapDispatchToProps = (dispatch) => ({
   load: () => dispatch(fetchTodos())
 });
